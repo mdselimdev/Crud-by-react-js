@@ -1,61 +1,56 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import "./Home.css";
+import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router-dom";
+import UserInfo from "../UserInfo/UserInfo";
 
-const Home = () => {
+const Editinfo = () => {
+  const { id } = useParams();
   const [fullName, setFullName] = useState("");
   const [selects, setSelect] = useState();
   const [conditon, setCondition] = useState(false);
-  const [userId, setUserId] = useState(1);
-  const [alldata, setAllData] = useState([]);
-  const { reset } = useForm();
+  const [single, setSingle] = useState({});
+
   let history = useNavigate();
 
   useEffect(() => {
-    const d = localStorage.getItem("User");
-    const user = JSON.parse(d);
-    console.log(user);
-    let id = user.length;
-    setUserId(id + 1);
-  }, []);
+    const data = UserInfo.find((d) => d.id == id);
+    setSingle(data);
+  }, [id]);
 
-  const addData = (event) => {
-    if (!fullName) {
-      return;
-    } else {
-      const name = {
-        id: userId,
-        fullname: fullName,
-        passion: selects,
-        condition: conditon,
-      };
-      if (name.condition === true) {
-        // const data = alldata.push(name);
-        setAllData([alldata, ...name]);
-        // console.log(data);
-        const sutData = JSON.stringify(alldata);
-        localStorage.setItem("User", sutData);
-        history("/viewinfo");
-      } else {
-        alert("Please Agree with term and condition");
-      }
-    }
+  const updateData = (event) => {
+    let a = UserInfo[id];
+    a.fullname = fullName;
+    a.passion = selects;
+    a.condition = conditon;
+    UserInfo.push(a);
+    // const name = { fullname: fullName, passion: selects, condition: conditon };
+    // console.log(name);
+    history("/viewinfo");
+    // if (name.condition === true) {
+    // const data = [...alldata, name];
+    // setAllData(data);
+    //   UserInfo.push(name);
+    //   history("/viewinfo");
+    // } else {
+    //   alert("Please Agree with term and condition");
+    // }
+    // const sutData = JSON.stringify(alldata);
+    // localStorage.setItem("User", sutData);
 
-    reset();
     event.preventDefault();
   };
 
   return (
     <div>
       <div className="data-box">
-        <h4>Welcome to challengers home</h4>
-        <form onSubmit={addData} className="data-main-box">
+        <h4>Update your data</h4>
+        <form onSubmit={updateData} className="data-main-box">
           <label className="labelPara" htmlFor="fullName">
             Fullname
           </label>
           <input
             type="text"
+            defaultValue={single.fullname}
             id="fullName"
             placeholder="Enter your name"
             onChange={(e) => setFullName(e.target.value)}
@@ -65,12 +60,13 @@ const Home = () => {
             Select Sectors
           </label>
           <select
-            value={selects}
             onChange={(e) => setSelect(e.target.value)}
             id="dino-select"
+            value={selects.input.value}
             required
           >
             <optgroup label="Manufacturing">
+              <option selected>Choose your option</option>
               <option>Construction Materials</option>
               <option>Electronics And Optics</option>
             </optgroup>
@@ -101,11 +97,9 @@ const Home = () => {
               id="termAndCondi"
               required
             />
-            <label htmlFor="termAndCondi">
-              I accept all term and conditions
-            </label>
+            <label htmlFor="termAndCondi">Are you agree to change it</label>
           </div>
-          <button className="btnCmn">Save Data</button>
+          <button className="btnCmn">Update Data</button>
         </form>
         <p className="para">
           Please enter your name and pick the Sectors you are currently involved
@@ -119,4 +113,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Editinfo;
