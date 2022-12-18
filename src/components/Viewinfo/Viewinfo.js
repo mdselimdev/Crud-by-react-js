@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Viewinfo = () => {
   const [userData, setUserData] = useState([]);
 
-  let history = useNavigate();
-
   useEffect(() => {
     const data = localStorage.getItem("User");
     const d = JSON.parse(data);
-    console.log(d);
     setUserData(d);
   }, []);
 
   const handleDelete = (id) => {
-    let index = userData;
-    delete [index.id];
-
-    history("/viewinfo");
+    const d = userData.filter((u) => u.userId !== id);
+    delete d[id];
+    setUserData(d);
+    localStorage.setItem("User", JSON.stringify(d));
   };
 
   return (
@@ -39,6 +36,7 @@ const Viewinfo = () => {
       <Table striped bordered hover>
         <thead className="text-center">
           <tr>
+            <th>Id Number</th>
             <th>Name</th>
             <th>Selected Sector</th>
             <th>Term & condition</th>
@@ -49,20 +47,21 @@ const Viewinfo = () => {
           {userData && userData.length > 0 ? (
             userData.map((data) => {
               return (
-                <tr key={data.id}>
+                <tr key={data.userId}>
+                  <td>{data.userId}</td>
                   <td>{data.fullname}</td>
                   <td>{data.passion}</td>
                   <td>{data.condition && "True"}</td>
                   <td>
-                    <Button variant="primary">
-                      <Link className="text-white" to={`/viewinfo/${data.id}`}>
+                    <Link to={`/viewinfo/${data.userId}`}>
+                      <Button className="text-white" variant="primary">
                         Edit
-                      </Link>
-                    </Button>{" "}
+                      </Button>
+                    </Link>{" "}
                     &nbsp;{" "}
                     <Button
                       variant="primary"
-                      onClick={() => handleDelete(data.id)}
+                      onClick={() => handleDelete(data.userId)}
                     >
                       Delete
                     </Button>
@@ -72,6 +71,7 @@ const Viewinfo = () => {
             })
           ) : (
             <tr className="text-center text-primary">
+              <td>There is no data</td>
               <td>There is no data</td>
               <td>There is no data</td>
               <td>There is no data</td>

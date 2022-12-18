@@ -1,44 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import UserInfo from "../UserInfo/UserInfo";
 
 const Editinfo = () => {
   const { id } = useParams();
   const [fullName, setFullName] = useState("");
   const [selects, setSelect] = useState();
   const [conditon, setCondition] = useState(false);
+  const [user, setUser] = useState([]);
   const [single, setSingle] = useState({});
 
   let history = useNavigate();
 
-  useEffect(() => {
-    const data = UserInfo.find((d) => d.id == id);
-    setSingle(data);
-  }, [id]);
-
   const updateData = (event) => {
-    let a = UserInfo[id];
-    a.fullname = fullName;
-    a.passion = selects;
-    a.condition = conditon;
-    UserInfo.push(a);
-    // const name = { fullname: fullName, passion: selects, condition: conditon };
-    // console.log(name);
+    single.fullname = fullName;
+    single.passion = selects;
+    single.condition = conditon;
+    const d = user.find((e) => e.userId === id);
+    setSingle(single);
     history("/viewinfo");
-    // if (name.condition === true) {
-    // const data = [...alldata, name];
-    // setAllData(data);
-    //   UserInfo.push(name);
-    //   history("/viewinfo");
-    // } else {
-    //   alert("Please Agree with term and condition");
-    // }
-    // const sutData = JSON.stringify(alldata);
-    // localStorage.setItem("User", sutData);
-
     event.preventDefault();
   };
+
+  useEffect(() => {
+    const itemList = JSON.parse(localStorage.getItem("User"));
+    setUser(itemList);
+    if (itemList) {
+      const newLocalUser = itemList.find((usre) => {
+        return usre.userId === id;
+      });
+      setSingle(newLocalUser);
+    } else {
+      return [];
+    }
+  }, [id]);
 
   return (
     <div>
@@ -49,8 +44,8 @@ const Editinfo = () => {
             Fullname
           </label>
           <input
+            defaultValue={single?.fullname}
             type="text"
-            defaultValue={single.fullname}
             id="fullName"
             placeholder="Enter your name"
             onChange={(e) => setFullName(e.target.value)}
@@ -60,13 +55,13 @@ const Editinfo = () => {
             Select Sectors
           </label>
           <select
+            defaultValue={single?.passion}
             onChange={(e) => setSelect(e.target.value)}
             id="dino-select"
-            value={selects.input.value}
             required
           >
             <optgroup label="Manufacturing">
-              <option selected>Choose your option</option>
+              <option>Choose your option</option>
               <option>Construction Materials</option>
               <option>Electronics And Optics</option>
             </optgroup>

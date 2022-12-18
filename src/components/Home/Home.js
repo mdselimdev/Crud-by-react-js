@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -7,41 +7,32 @@ const Home = () => {
   const [fullName, setFullName] = useState("");
   const [selects, setSelect] = useState();
   const [conditon, setCondition] = useState(false);
-  const [userId, setUserId] = useState(1);
-  const [alldata, setAllData] = useState([]);
   const { reset } = useForm();
   let history = useNavigate();
 
-  useEffect(() => {
-    const d = localStorage.getItem("User");
-    const user = JSON.parse(d);
-    console.log(user);
-    let id = user.length;
-    setUserId(id + 1);
-  }, []);
-
+  // Add User to Localstorage
   const addData = (event) => {
+    const d = localStorage.getItem("User") || "[]";
+    const user = JSON.parse(d);
+    let userId = new Date().getTime().toString();
+    const name = {
+      userId: userId,
+      fullname: fullName,
+      passion: selects,
+      condition: conditon,
+    };
     if (!fullName) {
       return;
     } else {
-      const name = {
-        id: userId,
-        fullname: fullName,
-        passion: selects,
-        condition: conditon,
-      };
       if (name.condition === true) {
-        // const data = alldata.push(name);
-        setAllData([alldata, ...name]);
-        // console.log(data);
-        const sutData = JSON.stringify(alldata);
-        localStorage.setItem("User", sutData);
+        user.push(name);
+        const addData = JSON.stringify(user);
+        localStorage.setItem("User", addData);
         history("/viewinfo");
       } else {
         alert("Please Agree with term and condition");
       }
     }
-
     reset();
     event.preventDefault();
   };
@@ -61,16 +52,18 @@ const Home = () => {
             onChange={(e) => setFullName(e.target.value)}
             required
           />
+          {/* select option start here  */}
+
           <label className="labelPara" htmlFor="dino-select">
             Select Sectors
           </label>
           <select
-            value={selects}
             onChange={(e) => setSelect(e.target.value)}
             id="dino-select"
             required
           >
             <optgroup label="Manufacturing">
+              <option>Choose your option</option>
               <option>Construction Materials</option>
               <option>Electronics And Optics</option>
             </optgroup>
@@ -92,6 +85,9 @@ const Home = () => {
               <option>Milk and dairy products</option>
             </optgroup>
           </select>
+
+          {/* select option end here  */}
+          {/* term and condition button start ---------  */}
           <div>
             <input
               onClick={(e) => setCondition(e.target.checked)}
@@ -105,12 +101,14 @@ const Home = () => {
               I accept all term and conditions
             </label>
           </div>
+          {/* term and condition button end ----------- */}
           <button className="btnCmn">Save Data</button>
         </form>
         <p className="para">
           Please enter your name and pick the Sectors you are currently involved
           in.
         </p>
+        {/* View details button  */}
         <Link className="btnCmn" to={"/viewinfo"}>
           View Details
         </Link>
