@@ -22,15 +22,15 @@ const Home = () => {
       condition: conditon,
     };
     if (!fullName) {
-      return;
+      alert("Please fill data");
     } else {
-      if (name.condition === true) {
+      if (name.condition === true && name.passion !== undefined) {
         user.push(name);
         const addData = JSON.stringify(user);
         localStorage.setItem("User", addData);
         history("/viewinfo");
       } else {
-        alert("Please Agree with term and condition");
+        alert("Please Selects a value");
       }
     }
     reset();

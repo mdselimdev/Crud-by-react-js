@@ -5,15 +5,16 @@ import { Link } from "react-router-dom";
 const Viewinfo = () => {
   const [userData, setUserData] = useState([]);
 
+  // Data Load from local host
   useEffect(() => {
     const data = localStorage.getItem("User");
     const d = JSON.parse(data);
     setUserData(d);
   }, []);
 
+  // Delter Data Option Code
   const handleDelete = (id) => {
     const d = userData.filter((u) => u.userId !== id);
-    delete d[id];
     setUserData(d);
     localStorage.setItem("User", JSON.stringify(d));
   };
@@ -22,11 +23,11 @@ const Viewinfo = () => {
     <div className="p-5">
       <div className="d-flex align-items-center">
         <div style={{ width: "30%" }}>
-          <Button variant="primary">
-            <Link className="text-white" to={`/`}>
+          <Link to={`/`}>
+            <Button variant="primary" className="text-white">
               Back Home
-            </Link>
-          </Button>{" "}
+            </Button>
+          </Link>{" "}
         </div>
         <div style={{ width: "70%", marginLeft: "162px" }}>
           <h1 className="text-left py-5">Stored Information</h1>

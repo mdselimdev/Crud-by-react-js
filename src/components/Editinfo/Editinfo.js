@@ -12,16 +12,35 @@ const Editinfo = () => {
 
   let history = useNavigate();
 
+  // Update Data and Save Again Localhost
   const updateData = (event) => {
-    single.fullname = fullName;
-    single.passion = selects;
-    single.condition = conditon;
-    const d = user.find((e) => e.userId === id);
-    setSingle(single);
+    console.log(fullName);
+    if (conditon === true && fullName.length != 0) {
+      single.fullname = fullName;
+      single.passion = selects;
+      single.condition = conditon;
+      setUser(
+        user.map((ele) => {
+          if (ele.id === id) {
+            return {
+              ...ele,
+              fullname: fullName,
+              passion: selects,
+              condition: conditon,
+            };
+          }
+          return ele;
+        })
+      );
+    } else {
+      alert("Please agree with to change it");
+    }
+    localStorage.setItem("User", JSON.stringify(user));
     history("/viewinfo");
     event.preventDefault();
   };
 
+  // Find Data From Localhost
   useEffect(() => {
     const itemList = JSON.parse(localStorage.getItem("User"));
     setUser(itemList);
@@ -55,7 +74,6 @@ const Editinfo = () => {
             Select Sectors
           </label>
           <select
-            defaultValue={single?.passion}
             onChange={(e) => setSelect(e.target.value)}
             id="dino-select"
             required
